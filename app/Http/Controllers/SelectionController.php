@@ -27,6 +27,8 @@ class SelectionController extends Controller
         $existingSelection = Selection::find( $id );
 
         if( $existingSelection ){
+            
+            
             return $existingSelection;
         }
 
@@ -92,9 +94,11 @@ class SelectionController extends Controller
         $existingSelection = Selection::find( $id );
 
         if( $existingSelection ){
-            
-            
             DB::update('update selections set counter = counter + 1 where id = ?', [$id]);
+            DB::update('update suma_table set suma = (select sum(counter) from selections)');
+            DB::update('update selections set percent = (select truncate (counter * 100 / (select suma from suma_table),2)) ');
+            
+            
             $existingSelection->save();
             return $existingSelection;
         }
